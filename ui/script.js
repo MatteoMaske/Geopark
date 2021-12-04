@@ -39,7 +39,10 @@ request.onload = function () {
             const item = document.createElement('li');
             item.textContent = parco.Nome;
             item.setAttribute('class', 'list-group-item d-flex justify-content-between align-items-center');
-
+            
+            const span=document.createElement('span');
+            span.setAttribute('class','badge bg-primary rounded-pill');
+            span.textContent=parco.Id;
             
 
             /*card.onclick=()=>{
@@ -47,7 +50,8 @@ request.onload = function () {
             }*/
 
             
-            list.appendChild(item)
+            list.appendChild(item);
+            item.appendChild(span);
 
         });
     } else {
