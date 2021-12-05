@@ -1,6 +1,7 @@
 const app = document.getElementById('root');
 
 const logo = document.createElement('img');
+logo.setAttribute=('class','foto');
 logo.src = 'logo.png';
 
 
@@ -15,16 +16,13 @@ container.setAttribute('class', 'container');
 app.appendChild(logo);
 app.appendChild(container);
 
-const card = document.createElement('div');
-card.setAttribute('class','container');
-
 const list = document.createElement('ul');
 list.setAttribute('class', 'list-group');
 
 container.appendChild(list);
 
 var request = new XMLHttpRequest();
-request.open('GET', 'http://localhost:49146/api/parco', true);
+request.open('GET', 'http://localhost:49146/api/parchi', true);
 request.onload = function () {
 
 
@@ -33,21 +31,24 @@ request.onload = function () {
   //  console.log(data);
     if (request.status >= 200 && request.status < 400) {
         data.forEach(parco => {
-            console.log(parco.Nome);
+           // console.log(parco.Nome);
         
             
             const item = document.createElement('li');
             item.textContent = parco.Nome;
             item.setAttribute('class', 'list-group-item d-flex justify-content-between align-items-center');
-            
+            item.setAttribute('onclick', 'http://localhost:49146/api/prodotto?id=');
+
             const span=document.createElement('span');
             span.setAttribute('class','badge bg-primary rounded-pill');
-            span.textContent=parco.Id;
+            var star='\#9734'
+            span.textContent='☆';
             
 
-            /*card.onclick=()=>{
-                window.location='http://localhost:49146/api/prodotto?id=' + product.id;
-            }*/
+            item.onclick=()=>{
+                console.log("dc");
+                window.location='http://localhost:49146/api/parco?id=' + parco.Id;
+            }
 
             
             list.appendChild(item);

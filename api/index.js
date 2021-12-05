@@ -14,6 +14,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 var MongoClient=require("mongodb").MongoClient;
+const { response } = require("express");
 
 var CONNECTION_STRING="mongodb+srv://marina:marina@cluster0.xlbi6.mongodb.net/test";
 
@@ -175,15 +176,35 @@ app.delete('/api/prodotti/:name', (request, response) => {
 
 
 
-app.get('/prodotto',(request,response)=>{
+app.get('/api/parco',(request,response)=>{
     const id = request.query.id;
-    response.send("ciao " + id);
+
+    database.collection("Parchi").find({Id:parseInt(id)}).toArray((error, result) =>{
+        console.log("Cerco info su parco " + id);
+        //mostriamo punti di quel parco
+        response.send(result);
+        })
 })
 
-app.get('/api/parco', (request, response) => {
+app.get('/api/parchi', (request, response) => {
    database.collection("Parchi").find({}).toArray((error, result) =>{
     console.log(result);
     response.send(result);
     })
   })
+
+app.post('/api/parco', (request,response) =>{
+    database.collection("Parchi").count({},function(error,newId){
+        if(error){
+            console.log(error);
+        }
+
+    database.collection("Parchi").insertOne({
+        Id: newId+1,
+        Nome: request.body['Nome parco']
+    });
+
+    response.json("Parco aggiunto");
+    })
+})
 
