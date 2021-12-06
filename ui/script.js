@@ -37,11 +37,9 @@ request.onload = function () {
             const item = document.createElement('li');
             item.textContent = parco.Nome;
             item.setAttribute('class', 'list-group-item d-flex justify-content-between align-items-center');
-            item.setAttribute('onclick', 'http://localhost:49146/api/prodotto?id=');
 
             const span=document.createElement('span');
             span.setAttribute('class','badge bg-primary rounded-pill');
-            var star='\#9734'
             span.textContent='☆';
             
 

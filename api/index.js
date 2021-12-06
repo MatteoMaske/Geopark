@@ -175,7 +175,7 @@ app.delete('/api/prodotti/:name', (request, response) => {
 })
 
 
-
+//ricerca info di un parco dopo click su di esso
 app.get('/api/parco',(request,response)=>{
     const id = request.query.id;
 
@@ -186,6 +186,7 @@ app.get('/api/parco',(request,response)=>{
         })
 })
 
+//richesta dei parchi nel database per pagina principale
 app.get('/api/parchi', (request, response) => {
    database.collection("Parchi").find({}).toArray((error, result) =>{
     console.log(result);
@@ -193,6 +194,7 @@ app.get('/api/parchi', (request, response) => {
     })
   })
 
+//aggiunta di un parco
 app.post('/api/parco', (request,response) =>{
     database.collection("Parchi").count({},function(error,newId){
         if(error){
@@ -204,16 +206,17 @@ app.post('/api/parco', (request,response) =>{
         Nome: request.body['Nome parco']
     });
 
-    response.json("Parco aggiunto ${newId}");
+    response.json("Parco aggiunto " + (newId+1));
     })
 })
 
+//eliminazione parco da id
 app.delete('/api/parco/:id',(request,response)=>{
     database.collection("Parchi").deleteOne({
         Id: parseInt(request.params.id)
     });
 
-    response.json("Deleted successfully");
+    response.json("Deleted successfully park " + request.params.id);
     
 })
 
