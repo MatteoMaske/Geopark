@@ -204,7 +204,16 @@ app.post('/api/parco', (request,response) =>{
         Nome: request.body['Nome parco']
     });
 
-    response.json("Parco aggiunto");
+    response.json("Parco aggiunto ${newId}");
     })
+})
+
+app.delete('/api/parco/:id',(request,response)=>{
+    database.collection("Parchi").deleteOne({
+        Id: parseInt(request.params.id)
+    });
+
+    response.json("Deleted successfully");
+    
 })
 
