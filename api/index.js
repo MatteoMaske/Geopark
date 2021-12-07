@@ -189,10 +189,17 @@ app.get('/api/parco',(request,response)=>{
 //richesta dei parchi nel database per pagina principale
 app.get('/api/parchi', (request, response) => {
    database.collection("Parchi").find({}).toArray((error, result) =>{
-    console.log(result);
+    //console.log(result);
     response.send(result);
     })
   })
+
+  app.get('/api/parchi/pref', (request, response) => {
+    database.collection("Parchi preferiti").find({}).toArray((error, result) =>{
+     console.log(result);
+     response.send(result);
+     })
+   })
 
 //aggiunta di un parco
 app.post('/api/parco', (request,response) =>{
