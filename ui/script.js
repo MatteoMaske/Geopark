@@ -44,10 +44,20 @@ request.onload = function () {
             
 
             item.onclick=()=>{
-                console.log("dc");
                 window.location='http://localhost:49146/api/parco?id=' + parco.Id;
             }
 
+            span.onclick=()=>{
+                if(span.textContent == '☆') {
+                    span.textContent='★';
+                }
+                else {
+                    span.textContent='☆';
+                }
+                disabledEventPropagation(this);
+            }
+
+            
             
             list.appendChild(item);
             item.appendChild(span);
@@ -59,5 +69,13 @@ request.onload = function () {
         app.appendChild(errorMessage);
     }
 }
-
+function disabledEventPropagation(event)
+{
+   if (event.stopPropagation){
+       event.stopPropagation();
+   }
+   else if(window.event){
+      window.event.cancelBubble=true;
+   }
+}
 request.send();
