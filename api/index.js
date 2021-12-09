@@ -175,6 +175,9 @@ app.delete('/api/prodotti/:name', (request, response) => {
 })
 
 
+
+
+
 //ricerca info di un parco dopo click su di esso
 app.get('/api/parco',(request,response)=>{
     const id = request.query.id;
@@ -186,6 +189,14 @@ app.get('/api/parco',(request,response)=>{
         })
 })
 
+app.get('/api/punti',(req,res)=>{
+    const id=req.query.id;
+    database.collection("Parchi").find({Id:parseInt(id)}).toArray((error, result) =>{
+        console.log( result);
+        res.send(result);
+        })
+})
+
 //richesta dei parchi nel database per pagina principale
 app.get('/api/parchi', (request, response) => {
    database.collection("Parchi").find({}).toArray((error, result) =>{
@@ -193,13 +204,6 @@ app.get('/api/parchi', (request, response) => {
     response.send(result);
     })
   })
-
-  app.get('/api/parchi/pref', (request, response) => {
-    database.collection("Parchi preferiti").find({}).toArray((error, result) =>{
-     console.log(result);
-     response.send(result);
-     })
-   })
 
 //aggiunta di un parco
 app.post('/api/parco', (request,response) =>{
@@ -209,8 +213,8 @@ app.post('/api/parco', (request,response) =>{
         }
 
     database.collection("Parchi").insertOne({
-        Id: newId+1,
-        Nome: request.body['Nome parco']
+        "Id": newId+1,
+        "Nome": request.body['Nome']
     });
 
     response.json("Parco aggiunto " + (newId+1));

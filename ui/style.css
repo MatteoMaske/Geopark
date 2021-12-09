@@ -1,5 +1,6 @@
 #root{
-  align-self: center;
+  align-items: center;
+  text-align: center;
 }
 .container {
     display: flex;

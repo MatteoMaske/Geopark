@@ -1,8 +1,9 @@
 const app = document.getElementById('root');
 
 const logo = document.createElement('img');
-logo.setAttribute=('class','foto');
-logo.src = 'logo.png';
+logo.setAttribute('class','foto');
+logo.setAttribute('align','center');
+logo.src = '../logo.png';
 
 
 const container = document.createElement('div');
@@ -20,6 +21,33 @@ const list = document.createElement('ul');
 list.setAttribute('class', 'list-group');
 
 container.appendChild(list);
+
+function changeContainer(ID){
+    container.removeChild(list);
+    const prova=document.createElement("ul");
+
+    var request = new XMLHttpRequest();
+    request.open('GET', 'http://localhost:49146/api/punti?id='+ID, true);
+    request.onload = function () {
+
+
+        // Begin accessing JSON data here
+        var data = JSON.parse(this.response);
+    //  console.log(data);
+        if (request.status >= 200 && request.status < 400) {
+            data[0].Punti.forEach(punto => {
+            console.log(punto);
+            let item=document.createElement('li');
+            item.textContent=(punto.NomePunto);
+
+            prova.appendChild(item);
+            });
+        }
+    }
+
+    request.send();
+    container.appendChild(prova);
+}
 
 var request = new XMLHttpRequest();
 request.open('GET', 'http://localhost:49146/api/parchi', true);
@@ -45,7 +73,8 @@ request.onload = function () {
 
             item.onclick=()=>{
                 console.log("dc");
-                window.location='http://localhost:49146/api/parco?id=' + parco.Id;
+                changeContainer(parco.Id);         
+
             }
 
             
