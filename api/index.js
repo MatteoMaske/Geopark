@@ -186,7 +186,7 @@ app.get('/api/parco',(request,response)=>{
         console.log("Cerco info su parco " + id);
         //mostriamo punti di quel parco
         response.send(result);
-        })
+    })
 })
 
 app.get('/api/punti',(req,res)=>{
