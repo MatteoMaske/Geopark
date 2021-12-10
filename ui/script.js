@@ -4,7 +4,9 @@ const logo = document.createElement('img');
 logo.setAttribute('class','foto');
 logo.setAttribute('align','center');
 logo.src = '../logo.png';
-
+logo.onclick=()=>{
+    initialize();
+};
 
 const container = document.createElement('div');
 container.setAttribute('class', 'container');
@@ -17,10 +19,7 @@ container.setAttribute('class', 'container');
 app.appendChild(logo);
 app.appendChild(container);
 
-const list = document.createElement('ul');
-list.setAttribute('class', 'list-group');
-
-container.appendChild(list);
+initialize();
 
 function changeContainer(ID){
     container.removeChild(list);
@@ -48,6 +47,14 @@ function changeContainer(ID){
     request.send();
     container.appendChild(prova);
 }
+
+function initialize(){
+
+const list = document.createElement('ul');
+list.setAttribute('class', 'list-group');
+//container.removeChild(list);
+
+container.appendChild(list);
 
 var request = new XMLHttpRequest();
 request.open('GET', 'http://localhost:49146/api/parchi', true);
@@ -107,3 +114,4 @@ function disabledEventPropagation(event)
    }
 }
 request.send();
+}
