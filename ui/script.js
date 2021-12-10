@@ -72,7 +72,6 @@ request.onload = function () {
             
 
             item.onclick=()=>{
-                //console.log("dc");
                 changeContainer(parco.Id);         
             }
 
