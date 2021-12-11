@@ -11,11 +11,6 @@ logo.src = '../logo.png';
 const container = document.createElement('div');
 container.setAttribute('class', 'container');
 
-/*const ancora = document.createElement('a');
-            ancora.setAttribute('href','sto.com');
-            ancora.textContent = 'sto cazzo';
-            app.appendChild(ancora);*/-
-
 app.appendChild(logo);
 app.appendChild(container);
 
@@ -94,67 +89,67 @@ function changeContainer2(ID, NOMEP){
 
 /*function initialize(){
 
-const list = document.createElement('ul');
-list.setAttribute('class', 'list-group');
-//container.removeChild(list);
+    const list = document.createElement('ul');
+    list.setAttribute('class', 'list-group');
+    //container.removeChild(list);
 
-container.appendChild(list);*/
+    container.appendChild(list);*/
 
-var request = new XMLHttpRequest();
-request.open('GET', 'http://localhost:49146/api/parchi', true);
-request.onload = function () {
+    var request = new XMLHttpRequest();
+    request.open('GET', 'http://localhost:49146/api/parchi', true);
+    request.onload = function () {
 
 
-    // Begin accessing JSON data here
-    var data = JSON.parse(this.response);
-  //  console.log(data);
-    if (request.status >= 200 && request.status < 400) {
-        data.forEach(parco => {
-           // console.log(parco.Nome);
-        
+        // Begin accessing JSON data here
+        var data = JSON.parse(this.response);
+    //  console.log(data);
+        if (request.status >= 200 && request.status < 400) {
+            data.forEach(parco => {
+            // console.log(parco.Nome);
             
-            const item = document.createElement('li');
-            item.textContent = parco.Nome;
-            item.setAttribute('class', 'list-group-item d-flex justify-content-between align-items-center');
+                
+                const item = document.createElement('li');
+                item.textContent = parco.Nome;
+                item.setAttribute('class', 'list-group-item d-flex justify-content-between align-items-center');
 
-            const span=document.createElement('span');
-            span.setAttribute('class','badge bg-primary rounded-pill');
-            span.textContent='☆';
-            
+                const span=document.createElement('span');
+                span.setAttribute('class','badge bg-primary rounded-pill');
+                span.textContent='☆';
+                
 
-            item.onclick=()=>{
-                changeContainer(parco.Id);         
-            }
-
-            span.onclick=()=>{
-                if(span.textContent == '☆') {
-                    span.textContent='★';
+                item.onclick=()=>{
+                    changeContainer(parco.Id);         
                 }
-                else {
-                    span.textContent='☆';
+
+                span.onclick=()=>{
+                    if(span.textContent == '☆') {
+                        span.textContent='★';
+                    }
+                    else {
+                        span.textContent='☆';
+                    }
+                    disabledEventPropagation(this);
                 }
-                disabledEventPropagation(this);
-            }
 
-            
-            
-            list.appendChild(item);
-            item.appendChild(span);
+                
+                
+                list.appendChild(item);
+                item.appendChild(span);
 
-        });
-    } else {
-        const errorMessage = document.createElement('marquee');
-        errorMessage.textContent = `THE API IS NOT WORKING!`;
-        app.appendChild(errorMessage);
+            });
+        } else {
+            const errorMessage = document.createElement('marquee');
+            errorMessage.textContent = `THE API IS NOT WORKING!`;
+            app.appendChild(errorMessage);
+        }
     }
-}
-function disabledEventPropagation(event)
-{
-   if (event.stopPropagation){
-       event.stopPropagation();
-   }
-   else if(window.event){
-      window.event.cancelBubble=true;
-   }
-}
-request.send();
+    function disabledEventPropagation(event){
+        if (event.stopPropagation){
+            event.stopPropagation();
+        }
+        else if(window.event){
+            window.event.cancelBubble=true;
+        }
+    }
+    request.send();
+//}
