@@ -4,9 +4,9 @@ const logo = document.createElement('img');
 logo.setAttribute('class','foto');
 logo.setAttribute('align','center');
 logo.src = '../logo.png';
-logo.onclick=()=>{
+/*logo.onclick=()=>{
     initialize();
-};
+};*/
 
 const container = document.createElement('div');
 container.setAttribute('class', 'container');
@@ -19,11 +19,16 @@ container.setAttribute('class', 'container');
 app.appendChild(logo);
 app.appendChild(container);
 
-initialize();
+const list = document.createElement('ul');
+list.setAttribute('class', 'list-group');
+
+container.appendChild(list);
+const prova=document.createElement("ul");
+
+//initialize();
 
 function changeContainer(ID){
     container.removeChild(list);
-    const prova=document.createElement("ul");
 
     var request = new XMLHttpRequest();
     request.open('GET', 'http://localhost:49146/api/punti?id='+ID, true);
@@ -39,6 +44,10 @@ function changeContainer(ID){
             let item=document.createElement('li');
             item.textContent=(punto.NomePunto);
 
+            item.onclick=()=>{
+                changeContainer2(ID, punto.NomePunto);         
+            }
+
             prova.appendChild(item);
             });
         }
@@ -48,13 +57,48 @@ function changeContainer(ID){
     container.appendChild(prova);
 }
 
-function initialize(){
+function changeContainer2(ID, NOMEP){
+    container.removeChild(prova);
+    const prova2=document.createElement("ul");
+
+    var request = new XMLHttpRequest();
+    request.open('GET', 'http://localhost:49146/api/punti?id='+ID, true);
+    request.onload = function () {
+
+
+        // Begin accessing JSON data here
+        var data = JSON.parse(this.response);
+    //  console.log(data);
+        if (request.status >= 200 && request.status < 400) {
+            data[0].Punti.forEach(punto => {
+            console.log(punto);
+            let item=document.createElement('li');
+            item.textContent=(punto.NomePunto);
+
+            prova2.appendChild(item);
+            item=document.createElement('li');
+            item.textContent=(punto.Coordinate.Lat);
+            
+            prova2.appendChild(item);
+            item=document.createElement('li');
+            item.textContent=(punto.Coordinate.Long);
+
+            prova2.appendChild(item);
+            });
+        }
+    }
+
+    request.send();
+    container.appendChild(prova2);
+}
+
+/*function initialize(){
 
 const list = document.createElement('ul');
 list.setAttribute('class', 'list-group');
 //container.removeChild(list);
 
-container.appendChild(list);
+container.appendChild(list);*/
 
 var request = new XMLHttpRequest();
 request.open('GET', 'http://localhost:49146/api/parchi', true);
@@ -114,4 +158,3 @@ function disabledEventPropagation(event)
    }
 }
 request.send();
-}
