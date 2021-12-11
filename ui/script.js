@@ -5,17 +5,12 @@ const logo = document.createElement('img');
 logo.setAttribute('class','foto');
 logo.setAttribute('align','center');
 logo.src = '../logo.png';
-logo.onclick=()=>{
+/*logo.onclick=()=>{
     initialize();
-};
+};*/
 
 const container = document.createElement('div');
 container.setAttribute('class', 'container');
-
-/*const ancora = document.createElement('a');
-            ancora.setAttribute('href','sto.com');
-            ancora.textContent = 'sto cazzo';
-            app.appendChild(ancora);*/-
 
 app.appendChild(logo);
 app.appendChild(container);
@@ -38,48 +33,30 @@ request.open('GET', 'http://localhost:49146/api/parchi', true);
 request.onload = function () {
 
 
-    // Begin accessing JSON data here
-    var data = JSON.parse(this.response);
-  //  console.log(data);
-    if (request.status >= 200 && request.status < 400) {
-        data.forEach(parco => {
-           // console.log(parco.Nome);
-        
+        // Begin accessing JSON data here
+        var data = JSON.parse(this.response);
+    //  console.log(data);
+        if (request.status >= 200 && request.status < 400) {
+            data[0].Punti.forEach(punto => {
+            console.log(punto);
+            let item=document.createElement('li');
+            item.textContent=(punto.NomePunto);
+
+            prova2.appendChild(item);
+            item=document.createElement('li');
+            item.textContent=(punto.Coordinate.Lat);
             
-            const item = document.createElement('li');
-            item.textContent = parco.Nome;
-            item.setAttribute('class', 'list-group-item d-flex justify-content-between align-items-center');
+            prova2.appendChild(item);
+            item=document.createElement('li');
+            item.textContent=(punto.Coordinate.Long);
 
-            const span=document.createElement('span');
-            span.setAttribute('class','badge bg-primary rounded-pill');
-            span.textContent='☆';
-            
-
-            item.onclick=()=>{
-                changeContainer(parco.Id);         
-            }
-
-            span.onclick=()=>{
-                if(span.textContent == '☆') {
-                    span.textContent='★';
-                }
-                else {
-                    span.textContent='☆';
-                }
-                disabledEventPropagation(this);
-            }
-
-            
-            
-            list.appendChild(item);
-            item.appendChild(span);
-
-        });
-    } else {
-        const errorMessage = document.createElement('marquee');
-        errorMessage.textContent = `THE API IS NOT WORKING!`;
-        app.appendChild(errorMessage);
+            prova2.appendChild(item);
+            });
+        }
     }
+
+    request.send();
+    container.appendChild(prova2);
 }
 
 //FUNZIONE CEH AL CLICK SUL PARCO VISUALIZZA PUNTI D'INTERESSE
@@ -119,6 +96,4 @@ function disabledEventPropagation(event)
    else if(window.event){
       window.event.cancelBubble=true;
    }
-}
-request.send();
 }
