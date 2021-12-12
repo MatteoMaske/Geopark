@@ -4,7 +4,7 @@ const app = document.getElementById('root');
 const logo = document.createElement('img');
 logo.setAttribute('class','foto');
 logo.setAttribute('align','center');
-logo.src = '../logo.png';
+logo.src = '../Image/logo.png';
 logo.onclick=()=>{
     initialize();
 };
@@ -44,24 +44,25 @@ function initialize(){
             item.setAttribute('class','list-group-item d-flex justify-content-between align-items-center');
             item.textContent=(parco.Nome);
             item.onclick=()=>{
-               // e.stopPropagation;
                 changeContainer2(parco.Id);
+                disabledEventPropagation(this);
             }
 
             let span=document.createElement('span');
             span.setAttribute('class','badge bg-primary rounded-pill');
             span.textContent=('☆');
-            span.onclick=()=>{
+            span.onclick=(e)=>{
                // e.stopPropagation;
                 console.log(e.target);
                 let star = span.textContent;
                 console.log(star);
-                changeStar(star,this);
+                changeStar(star,span);
+                disabledEventPropagation(this);
+
             }
             
             item.appendChild(span);
             list.appendChild(item);
-
             });
         }
     }
@@ -94,11 +95,24 @@ function changeContainer(ID){
     }
 
     request.send();
-    container.appendChild(prova);
+    container.appendChild(generateDropDown());
 }
 
-function changeContainer2(ID, NOMEP){
+function changeContainer2(ID){
     while(container.firstChild)container.removeChild(container.firstChild);
+
+    //div con lista e dropdown
+    const listdropdown=document.createElement('div');
+    container.appendChild(listdropdown);
+
+    //div lista
+    const list=document.createElement('div');
+    listdropdown.appendChild(list);
+
+    //div dropdown
+    const dropdown=generateDropDown();
+    listdropdown.appendChild(dropdown);
+    
 
     var request = new XMLHttpRequest();
     request.open('GET', 'http://localhost:49146/api/punti?id='+ID, true);
@@ -115,10 +129,10 @@ function changeContainer2(ID, NOMEP){
             //card principale
             const card=document.createElement('div');
             card.setAttribute('class','card');
-            card.setAttribute('style','width: 18rem;');
+            card.setAttribute('style','width: 15rem;');
             //immagine
             const image=document.createElement('img');
-            image.setAttribute('src','../logo.png');
+            image.setAttribute('src',punto.Immagine);
             image.setAttribute('class',"card-img-top");
             card.appendChild(image);
 
@@ -149,7 +163,7 @@ function changeContainer2(ID, NOMEP){
             cardBody.appendChild(item);
 
             card.appendChild(cardBody);
-            container.appendChild(card);
+            list.appendChild(card);
             });
         }
     }
@@ -160,8 +174,53 @@ function changeContainer2(ID, NOMEP){
 function changeStar(star,span){
     if(star=='☆')span.textContent=('★');
     else span.textContent=('☆');
+}
 
-    disabledEventPropagation(span);
+function generateDropDown(){
+  const dropdown=document.createElement('div');
+  dropdown.setAttribute('class',"dropdown")
+  
+  let ancora = document.createElement('a');
+  ancora.setAttribute('class',"btn btn-secondary dropdown-toggle");
+  ancora.setAttribute('id',"dropdownMenuLink");
+  ancora.textContent=('Filtro');
+  dropdown.appendChild(ancora);
+
+  const list = document.createElement('ul');
+  list.setAttribute('class','dropdown-menu');
+  list.setAttribute('aria-labelledby',"dropdownMenuLink");
+
+  let item = document.createElement('li');
+    ancora = document.createElement('a');
+    ancora.setAttribute=('class',"dropdown-item" );
+    ancora.textContent=("Punti d'interesse");
+    dropdown.appendChild(ancora);
+  item.appendChild(ancora);
+  list.appendChild(item);
+    
+    
+
+  item = document.createElement('li');
+    ancora = document.createElement('a');
+    ancora.setAttribute=('class',"dropdown-item" );
+    ancora.textContent=("Punti ristoro");
+    dropdown.appendChild(ancora);
+  item.appendChild(ancora);
+  list.appendChild(item);
+  
+
+  item = document.createElement('li');
+    ancora = document.createElement('a');
+    ancora.setAttribute=('class',"dropdown-item" );
+    ancora.textContent=("Tutti");
+    dropdown.appendChild(ancora);
+  item.appendChild(ancora);
+  list.appendChild(item);
+
+  dropdown.appendChild(list);
+
+  return(dropdown);
+
 }
 
 
