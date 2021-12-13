@@ -111,20 +111,6 @@ function changeContainer2(ID){
     app.appendChild(generateDropDown());
     app.appendChild(container);
 
-
-    //div con lista e dropdown
-    const listdropdown=document.createElement('div');
-    //container.appendChild(listdropdown);
-
-    //div lista
-   /* const list=document.createElement('div');
-    container.appendChild(list);*/
-
-    //div dropdown
-    const dropdown=generateDropDown();
-  //  container.appendChild(dropdown);
-    
-
     var request = new XMLHttpRequest();
     request.open('GET', 'http://localhost:49146/api/punti?id='+ID, true);
     request.onload = function () {
@@ -191,44 +177,44 @@ function generateDropDown(){
   const dropdown=document.createElement('div');
   dropdown.setAttribute('class',"dropdown")
   
-  let button = document.createElement('a');
-  button.setAttribute('class',"btn btn-secondary dropdown-toggle");
-  button.setAttribute('id',"dropdownMenuButton1");
-  button.setAttribute('type',"button");
-  button.setAttribute('data-bs-toogle',"dropdown");
-  button.setAttribute('aria-explained',"false");
-  button.textContent=('Filtro');
-  dropdown.appendChild(button);
+    const button = document.createElement('button');
+    button.setAttribute('class','btn btn-secondary dropdown-toggle');
+    button.setAttribute('type','button');
+    button.setAttribute('id','dropdownMenuButton1');
+    button.setAttribute('data-bs-toogle','dropdown');
+    button.setAttribute('aria-expanded','false');
+    button.textContent=('Filtro');
+    dropdown.appendChild(button);
 
-  const list = document.createElement('ul');
-  list.setAttribute('class','dropdown-menu');
-  list.setAttribute('aria-labelledby',"dropdownMenuButton1");
+    const list = document.createElement('ul');
+    list.setAttribute('class','dropdown-menu');
+    list.setAttribute('aria-labelledby',"dropdownMenuButton1");
 
-  let item = document.createElement('li');
-    ancora = document.createElement('a');
-    ancora.setAttribute=('class',"dropdown-item" );
-    ancora.textContent=("Punti d'interesse");
-    item.appendChild(ancora);
-  list.appendChild(item);
-    
-    
+      let item = document.createElement('li');
+        ancora = document.createElement('a');
+        ancora.setAttribute('class',"dropdown-item" );
+        ancora.textContent=("Punti d'interesse");
+        item.appendChild(ancora);
+      list.appendChild(item);
+        
+        
 
-  item = document.createElement('li');
-    ancora = document.createElement('a');
-    ancora.setAttribute=('class',"dropdown-item" );
-    ancora.textContent=("Punti ristoro");
-    item.appendChild(ancora);
-  list.appendChild(item);
-  
+      item = document.createElement('li');
+        ancora = document.createElement('a');
+        ancora.setAttribute('class',"dropdown-item" );
+        ancora.textContent=("Punti ristoro");
+        item.appendChild(ancora);
+      list.appendChild(item);
+      
 
-  item = document.createElement('li');
-    ancora = document.createElement('a');
-    ancora.setAttribute=('class',"dropdown-item" );
-    ancora.textContent=("Tutti");
-    item.appendChild(ancora);
-  list.appendChild(item);
+      item = document.createElement('li');
+        ancora = document.createElement('a');
+        ancora.setAttribute('class',"dropdown-item" );
+        ancora.textContent=("Tutti");
+        item.appendChild(ancora);
+      list.appendChild(item);
 
-  dropdown.appendChild(list);
+    dropdown.appendChild(list);
 
   return(dropdown);
 
