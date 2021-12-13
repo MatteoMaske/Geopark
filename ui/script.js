@@ -154,7 +154,7 @@ function changeContainer2(ID){
 
            //latitudine
             let item=document.createElement('p');
-            item.textContent=('Lat: '+punto.Coordinate.Lat + "\n"+punto.Coordinate.Long);
+            item.textContent=('Lat: '+punto.Coordinate.Lat);
             cardBody.appendChild(item);            
         
           //longitudine
