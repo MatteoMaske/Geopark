@@ -183,16 +183,23 @@ app.get('/api/parco',(request,response)=>{
     const id = request.query.id;
 
     database.collection("Parchi").find({Id:parseInt(id)}).toArray((error, result) =>{
-        console.log("Cerco info su parco " + id);
         //mostriamo punti di quel parco
         response.send(result);
     })
 })
 
+//recerca di punti interesse di un parco
 app.get('/api/punti',(req,res)=>{
     const id=req.query.id;
     database.collection("Parchi").find({Id:parseInt(id)}).toArray((error, result) =>{
-        console.log( result);
+        res.send(result);
+        })
+})
+
+//richiesta punti in base a filtro
+app.get('/api/punti',(req,res)=>{
+    const id=req.query.filtro;
+    database.collection("Parchi").find({Id:parseInt(id)}).toArray((error, result) =>{
         res.send(result);
         })
 })
@@ -200,7 +207,6 @@ app.get('/api/punti',(req,res)=>{
 //richesta dei parchi nel database per pagina principale
 app.get('/api/parchi', (request, response) => {
    database.collection("Parchi").find({}).toArray((error, result) =>{
-    //console.log(result);
     response.send(result);
     })
   })

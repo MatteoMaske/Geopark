@@ -40,7 +40,6 @@ function initialize(){
 
         // Begin accessing JSON data here
         var data = JSON.parse(this.response);
-        console.log(data);
         if (request.status >= 200 && request.status < 400) {
             data.forEach(parco => {
             console.log(parco);
@@ -75,34 +74,6 @@ function initialize(){
     request.send();
 }
 
-//FUNZIONE CEH AL CLICK SUL PARCO VISUALIZZA PUNTI D'INTERESSE
-// function changeContainer(ID){
-//     while(container.firstChild)container.removeChild(container.firstChild);
-//     const prova=document.createElement("ul");
-
-//     var request = new XMLHttpRequest();
-//     request.open('GET', 'http://localhost:49146/api/punti?id='+ID, true);
-//     request.onload = function () {
-
-
-//         // Begin accessing JSON data here
-//         var data = JSON.parse(this.response);
-//     //  console.log(data);
-//         if (request.status >= 200 && request.status < 400) {
-//             data[0].Punti.forEach(punto => {
-//             console.log(punto);
-//             let item=document.createElement('li');
-//             item.textContent=(punto.NomePunto);
-
-//             prova.appendChild(item);
-//             });
-//         }
-//     }
-
-//     request.send();
-//     container.appendChild(generateDropDown());
-// }
-
 function changeContainer2(ID){
     while(container.firstChild)container.removeChild(container.firstChild);
     while(app.firstChild)app.removeChild(app.firstChild);
@@ -111,6 +82,12 @@ function changeContainer2(ID){
     app.appendChild(generateDropDown());
     app.appendChild(container);
 
+    //creo div per mappa
+    const mapDiv=document.createElement('div');
+    mapDiv.setAttribute('id','map');
+    app.appendChild(mapDiv);
+    createMap();
+
     var request = new XMLHttpRequest();
     request.open('GET', 'http://localhost:49146/api/punti?id='+ID, true);
     request.onload = function () {
@@ -118,10 +95,9 @@ function changeContainer2(ID){
 
         // Begin accessing JSON data here
         var data = JSON.parse(this.response);
-    //  console.log(data);
+        
         if (request.status >= 200 && request.status < 400) {
             data[0].Punti.forEach(punto => {
-            console.log(punto);
             
             //card principale
             const card=document.createElement('div');
@@ -174,21 +150,21 @@ function changeStar(star,span){
 }
 
 function generateDropDown(){
-  const dropdown=document.createElement('div');
-  dropdown.setAttribute('class',"dropdown")
+    var dropdown=document.createElement('div');
+    dropdown.setAttribute('class',"dropdown")
   
-    const button = document.createElement('button');
+    let button = document.createElement('button');
     button.setAttribute('class','btn btn-secondary dropdown-toggle');
     button.setAttribute('type','button');
-    button.setAttribute('id','dropdownMenuButton1');
-    button.setAttribute('data-bs-toogle','dropdown');
+    button.setAttribute('id','dropdownMenuButton2');
+    button.setAttribute('data-bs-toggle','dropdown');
     button.setAttribute('aria-expanded','false');
     button.textContent=('Filtro');
     dropdown.appendChild(button);
 
-    const list = document.createElement('ul');
+    let list = document.createElement('ul');
     list.setAttribute('class','dropdown-menu');
-    list.setAttribute('aria-labelledby',"dropdownMenuButton1");
+    list.setAttribute('aria-labelledby',"dropdownMenuButton2");
 
       let item = document.createElement('li');
         ancora = document.createElement('a');
@@ -205,6 +181,12 @@ function generateDropDown(){
         ancora.textContent=("Punti ristoro");
         item.appendChild(ancora);
       list.appendChild(item);
+
+      item = document.createElement('li');
+        let hr = document.createElement('hr');
+        hr.setAttribute('class','dropdown-divider');
+        item.appendChild(hr);
+      list.appendChild(item);
       
 
       item = document.createElement('li');
@@ -220,6 +202,78 @@ function generateDropDown(){
 
 }
 
+function AttractionFilter(filtroStr){
+
+    // svuoto container
+    while(container.firstChild)container.removeChild(container.firstChild);
+
+    let filtro=false;
+
+    if(filtroStr=="Punti d'interesse")filtro=true;
+
+    var request = new XMLHttpRequest();
+    request.open('GET', 'http://localhost:49146/api/punti?filtro='+filtro, true);
+    request.onload = function () {
+
+
+        // Begin accessing JSON data here
+        var data = JSON.parse(this.response);
+    //  console.log(data);
+        if (request.status >= 200 && request.status < 400) {
+            data[0].Punti.forEach(punto => {
+            
+            //card principale
+            const card=document.createElement('div');
+            card.setAttribute('class','card');
+            card.setAttribute('style','width: 15rem;');
+            //immagine
+            const image=document.createElement('img');
+            image.setAttribute('src',punto.Immagine);
+            image.setAttribute('class',"card-img-top");
+            card.appendChild(image);
+
+            //titolo e info parco
+            const cardBody=document.createElement('div');
+            cardBody.setAttribute('class','card-body');
+                        
+            //nome parco
+            let title=document.createElement('h5');
+            title.setAttribute('class','card-title')
+            title.textContent=(punto.NomePunto);
+            cardBody.appendChild(title);
+            
+            //sottotolo coordinate
+            title=document.createElement('h6');
+            title.setAttribute('class','card-title')
+            title.textContent=('Coordinate punto:');
+            cardBody.appendChild(title);
+
+           //latitudine
+            let item=document.createElement('p');
+            item.textContent=('Lat: '+punto.Coordinate.Lat);
+            cardBody.appendChild(item);            
+        
+          //longitudine
+            item=document.createElement('p');
+            item.textContent=('Long: '+punto.Coordinate.Long);
+            cardBody.appendChild(item);
+
+            card.appendChild(cardBody);
+            container.appendChild(card);
+            });
+        }
+    }
+}
+
+function createMap(){
+      mapboxgl.accessToken = 'pk.eyJ1IjoibWF0dGVvbWFza2UiLCJhIjoiY2t4NmxvYnZpMWZ1aTJ1cWsyNGM3NmJsZCJ9.VBSdjKXJpcyUVZgaFatxfw';
+      const map = new mapboxgl.Map({
+          container: 'map', // container ID
+          style: 'mapbox://styles/mapbox/streets-v11', // style URL
+          center: [12.0804, 46.0428], // starting position [lng, lat]
+          zoom: 10 // starting zoom
+      });
+}
 
 function disabledEventPropagation(event)
 {
