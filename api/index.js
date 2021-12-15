@@ -190,6 +190,7 @@ app.get('/api/parco',(request,response)=>{
 
 //recerca di punti interesse di un parco
 app.get('/api/punti',(req,res)=>{
+    //console.log("sono qui");
     const id=req.query.id;
     database.collection("Parchi").find({Id:parseInt(id)}).toArray((error, result) =>{
         res.send(result);
@@ -197,12 +198,18 @@ app.get('/api/punti',(req,res)=>{
 })
 
 //richiesta punti in base a filtro
-app.get('/api/punti',(req,res)=>{
-    const id=req.query.filtro;
-    database.collection("Parchi").find({Id:parseInt(id)}).toArray((error, result) =>{
-        res.send(result);
-        })
-})
+// app.get('/api/punti/filtro',(req,res)=>{
+//     const filter=req.query.filtro;
+//     let filtro;
+//     if (filter=="true")filtro = true;
+//     else filtro=false;
+//     console.log(typeof(filtro));
+
+//     database.collection("Parchi").find({Punti:{Interesse:filtro}}).toArray((error, result) =>{
+//         console.log(result);
+//         res.send(result);
+//         })
+// })
 
 //richesta dei parchi nel database per pagina principale
 app.get('/api/parchi', (request, response) => {
@@ -226,6 +233,21 @@ app.post('/api/parco', (request,response) =>{
     response.json("Parco aggiunto " + (newId+1));
     })
 })
+
+//aggiornamento preferiti
+app.put('/api/parco/preferiti', (request,response) =>{
+    database.collection("Parchi").updateOne(
+    //filter
+        {"Id":request.body['ID']},
+    //update
+        {
+            $set:{
+                "Preferiti": request.body['preferito']
+            }
+        }
+    );
+    response.json("Update succesfully");
+});
 
 //eliminazione parco da id
 app.delete('/api/parco/:id',(request,response)=>{

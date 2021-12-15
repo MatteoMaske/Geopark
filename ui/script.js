@@ -1,3 +1,5 @@
+//import Axios from "axios";
+
 //INIZIALIZZO PAGINA CON LOGO E DIV PRINCIPALE
 const app = document.getElementById('root');
 
@@ -42,51 +44,79 @@ function initialize(){
         var data = JSON.parse(this.response);
         if (request.status >= 200 && request.status < 400) {
             data.forEach(parco => {
-            console.log(parco);
+
+              console.log(parco);
+
+              if(parco.Preferiti){
 
             let item=document.createElement('li');
             item.setAttribute('class','list-group-item d-flex justify-content-between align-items-center');
             item.textContent=(parco.Nome);
             item.onclick=()=>{
-                changeContainer2(parco.Id);
+                changeContainerPointsPage2(parco.Id);
                 disabledEventPropagation(this);
             }
 
             let span=document.createElement('span');
             span.setAttribute('class','badge bg-primary rounded-pill');
             span.textContent=('☆');
-            span.onclick=(e)=>{
-               // e.stopPropagation;
-                console.log(e.target);
+            span.onclick=()=>{
                 let star = span.textContent;
-                console.log(star);
-                changeStar(star,span);
+                changeStar(star,span,parco.Id);
                 disabledEventPropagation(this);
 
             }
             
             item.appendChild(span);
             list.appendChild(item);
+          }
             });
+          
+            data.forEach(parco => {
+
+              if(!(parco.Preferiti)){
+
+            let item=document.createElement('li');
+            item.setAttribute('class','list-group-item d-flex justify-content-between align-items-center');
+            item.textContent=(parco.Nome);
+            item.onclick=()=>{
+                changeContainerPointsPage2(parco.Id);
+                disabledEventPropagation(this);
+            }
+
+            let span=document.createElement('span');
+            span.setAttribute('class','badge bg-primary rounded-pill');
+            span.textContent=('☆');
+            span.onclick=()=>{
+                let star = span.textContent;
+                changeStar(star,span,parco.Id);
+                disabledEventPropagation(this);
+
+            }
+            
+            item.appendChild(span);
+            list.appendChild(item);
+          }
+            });
+          
         }
     }
 
     request.send();
 }
 
-function changeContainer2(ID){
+function changeContainerPointsPage2(ID){
     while(container.firstChild)container.removeChild(container.firstChild);
     while(app.firstChild)app.removeChild(app.firstChild);
 
     app.appendChild(logo);
-    app.appendChild(generateDropDown());
-    app.appendChild(container);
+    app.appendChild(generateDropDown(ID));
 
     //creo div per mappa
     const mapDiv=document.createElement('div');
     mapDiv.setAttribute('id','map');
     app.appendChild(mapDiv);
-    createMap();
+    app.appendChild(container);
 
     var request = new XMLHttpRequest();
     request.open('GET', 'http://localhost:49146/api/punti?id='+ID, true);
@@ -97,6 +127,14 @@ function changeContainer2(ID){
         var data = JSON.parse(this.response);
         
         if (request.status >= 200 && request.status < 400) {
+
+          //centro mappa nel parco
+            console.log(data[0].CoordinateParco);
+            let long = data[0].CoordinateParco.Long;
+            let lat = data[0].CoordinateParco.Lat;
+            createMap(long,lat);
+
+          // stampo card punti interesse
             data[0].Punti.forEach(punto => {
             
             //card principale
@@ -144,12 +182,47 @@ function changeContainer2(ID){
     request.send();
 }
 
-function changeStar(star,span){
-    if(star=='☆')span.textContent=('★');
-    else span.textContent=('☆');
+function changeStar(star,span,id){
+    
+    var preferito;
+    if(star=='☆'){
+      span.textContent=('★');
+      updateFavourites(id,"true");
+    }else{
+      span.textContent=('☆');
+      updateFavourites(id,"false");
+    }
 }
 
-function generateDropDown(){
+function updateFavourites(id,value){
+
+    console.log("trying to update park " + id + " with " + value);
+
+    let idInt = parseInt(id);
+
+    let requestOptions={
+      method:'PUT',
+      headers: { 
+        'Content-Type': 'application/json'
+      },
+      body: {
+        "ID":idInt,
+        "preferito": value
+      }
+    };
+
+    fetch('http://localhost:49146/api/parco/preferiti',requestOptions)
+    .then((response)=>{
+      if(!response.ok){
+        throw new Error('Network says dc');
+      }
+    }).catch((error)=>{
+      console.error("Error: ", error);
+    });
+
+}
+
+function generateDropDown(ID){
     var dropdown=document.createElement('div');
     dropdown.setAttribute('class',"dropdown")
   
@@ -171,6 +244,10 @@ function generateDropDown(){
         ancora.setAttribute('class',"dropdown-item" );
         ancora.textContent=("Punti d'interesse");
         item.appendChild(ancora);
+        item.onclick=()=>{
+          console.log("filtro per interesse");
+          AttractionFilter(true,ID);
+        }
       list.appendChild(item);
         
         
@@ -179,7 +256,11 @@ function generateDropDown(){
         ancora = document.createElement('a');
         ancora.setAttribute('class',"dropdown-item" );
         ancora.textContent=("Punti ristoro");
-        item.appendChild(ancora);
+      item.appendChild(ancora);
+      item.onclick=()=>{
+        console.log("filtro per ristori");
+        AttractionFilter(false,ID);
+      }
       list.appendChild(item);
 
       item = document.createElement('li');
@@ -194,6 +275,10 @@ function generateDropDown(){
         ancora.setAttribute('class',"dropdown-item" );
         ancora.textContent=("Tutti");
         item.appendChild(ancora);
+        item.onclick=()=>{
+          console.log("filtro per ristori");
+          changeContainerPointsPage2(ID);
+        }
       list.appendChild(item);
 
     dropdown.appendChild(list);
@@ -202,26 +287,22 @@ function generateDropDown(){
 
 }
 
-function AttractionFilter(filtroStr){
+function AttractionFilter(filtro,ID){
 
     // svuoto container
     while(container.firstChild)container.removeChild(container.firstChild);
 
-    let filtro=false;
-
-    if(filtroStr=="Punti d'interesse")filtro=true;
-
     var request = new XMLHttpRequest();
-    request.open('GET', 'http://localhost:49146/api/punti?filtro='+filtro, true);
+    request.open('GET', 'http://localhost:49146/api/punti?id='+ID, true);
     request.onload = function () {
 
 
         // Begin accessing JSON data here
         var data = JSON.parse(this.response);
-    //  console.log(data);
+
         if (request.status >= 200 && request.status < 400) {
             data[0].Punti.forEach(punto => {
-            
+            if(punto.Interesse==filtro){
             //card principale
             const card=document.createElement('div');
             card.setAttribute('class','card');
@@ -260,19 +341,21 @@ function AttractionFilter(filtroStr){
 
             card.appendChild(cardBody);
             container.appendChild(card);
+            }
             });
         }
     }
+    request.send();
 }
 
-function createMap(){
+function createMap(long,lat){
       mapboxgl.accessToken = 'pk.eyJ1IjoibWF0dGVvbWFza2UiLCJhIjoiY2t4NmxvYnZpMWZ1aTJ1cWsyNGM3NmJsZCJ9.VBSdjKXJpcyUVZgaFatxfw';
       const map = new mapboxgl.Map({
           container: 'map', // container ID
           style: 'mapbox://styles/mapbox/streets-v11', // style URL
-          center: [12.0804, 46.0428], // starting position [lng, lat]
-          zoom: 10 // starting zoom
-      });
+          center: [long, lat], // starting position [lng, lat]
+          zoom: 15 // starting zoom
+      }); 
 }
 
 function disabledEventPropagation(event)
