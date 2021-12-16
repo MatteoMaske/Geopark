@@ -1,4 +1,4 @@
-//import Axios from "axios";
+
 
 //INIZIALIZZO PAGINA CON LOGO E DIV PRINCIPALE
 const app = document.getElementById('root');
@@ -25,13 +25,14 @@ function initialize(){
 
     while(container.firstChild)container.removeChild(container.firstChild);
     while(app.firstChild)app.removeChild(app.firstChild);
+    //while(list.firstChild)list.removeChild(list.firstChild);
 
     app.appendChild(logo);
     app.appendChild(container);
 
     const list = document.createElement('ul');
     list.setAttribute('class', 'list-group');
-    //container.removeChild(list);
+    container.removeChild(list);
 
     container.appendChild(list);
 
@@ -45,7 +46,7 @@ function initialize(){
         if (request.status >= 200 && request.status < 400) {
             data.forEach(parco => {
 
-              console.log(parco);
+              console.log(parco.Nome + " " + parco.Preferiti);
 
               if(parco.Preferiti){
 
@@ -59,10 +60,10 @@ function initialize(){
 
             let span=document.createElement('span');
             span.setAttribute('class','badge bg-primary rounded-pill');
-            span.textContent=('☆');
+            span.textContent=('★');
             span.onclick=()=>{
                 let star = span.textContent;
-                changeStar(star,span,parco.Id);
+                changeStar(star,parco.Id);
                 disabledEventPropagation(this);
 
             }
@@ -89,7 +90,7 @@ function initialize(){
             span.textContent=('☆');
             span.onclick=()=>{
                 let star = span.textContent;
-                changeStar(star,span,parco.Id);
+                changeStar(star,parco.Id);
                 disabledEventPropagation(this);
 
             }
@@ -129,7 +130,6 @@ function changeContainerPointsPage2(ID){
         if (request.status >= 200 && request.status < 400) {
 
           //centro mappa nel parco
-            console.log(data[0].CoordinateParco);
             let long = data[0].CoordinateParco.Long;
             let lat = data[0].CoordinateParco.Lat;
             createMap(long,lat);
@@ -182,15 +182,16 @@ function changeContainerPointsPage2(ID){
     request.send();
 }
 
-function changeStar(star,span,id){
+function changeStar(star,id){
     
-    var preferito;
     if(star=='☆'){
-      span.textContent=('★');
-      updateFavourites(id,"true");
-    }else{
-      span.textContent=('☆');
-      updateFavourites(id,"false");
+      updateFavourites(id,true);
+      initialize();
+    //  initialize();
+    }else if(star == '★'){
+      updateFavourites(id,false);
+      initialize();
+      //initialize();
     }
 }
 
@@ -200,21 +201,22 @@ function updateFavourites(id,value){
 
     let idInt = parseInt(id);
 
-    let requestOptions={
-      method:'PUT',
-      headers: { 
-        'Content-Type': 'application/json'
-      },
-      body: {
-        "ID":idInt,
-        "preferito": value
-      }
+    const data={
+      "ID": idInt,
+      "preferito": value
     };
 
-    fetch('http://localhost:49146/api/parco/preferiti',requestOptions)
+    fetch('http://localhost:49146/api/parco/preferiti',{
+      method:'PUT',
+      mode: 'cors',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+      })
     .then((response)=>{
       if(!response.ok){
-        throw new Error('Network says dc');
+        throw new Error('Network says error');
       }
     }).catch((error)=>{
       console.error("Error: ", error);
