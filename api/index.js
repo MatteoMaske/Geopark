@@ -1,6 +1,38 @@
 const Express = require("express");
 const app = Express();
 
+// modules to generate APIs documentation
+const swaggerJsDoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
+const swaggerOptions = {
+    swaggerDefinition: {
+        openapi: '3.0.0',
+        info: {
+            title: 'Express API for My Project',
+            version: '1.0.0',
+            description:
+                'This is a REST API application made with Express.',
+            license: {
+                name: 'Licensed Under MIT',
+                url: 'https://spdx.org/licenses/MIT.html',
+            },
+            contact: {
+                name: 'G26',
+                url: 'http://localhost:49146/',
+            },
+        },
+        servers: [
+            {
+                url: 'http://localhost:49146/',
+                description: 'Development server',
+            },
+        ],
+    },
+    apis: ["index.js"]
+};
+
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 var fs = require('fs');
 
