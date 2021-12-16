@@ -32,7 +32,6 @@ function initialize(){
 
     const list = document.createElement('ul');
     list.setAttribute('class', 'list-group');
-    container.removeChild(list);
 
     container.appendChild(list);
 
@@ -187,11 +186,11 @@ function changeStar(star,id){
     if(star=='☆'){
       updateFavourites(id,true);
       initialize();
-    //  initialize();
+      initialize();
     }else if(star == '★'){
       updateFavourites(id,false);
       initialize();
-      //initialize();
+      initialize();
     }
 }
 
