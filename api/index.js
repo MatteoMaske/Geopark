@@ -73,49 +73,6 @@ app.listen(49146, () => {
 
 /**
  * @swagger
- * /api/parco:
- *   get:
- *     summary: Informazioni di un parco.
- *     description: Ritorna le informazioni del parco cliccato dall'utente presenti nel sistema.
- *     responses:
- *       200:
- *         description: Informazioni del parco.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 data:
- *                   type: array
- *                   items:
- *                     type: object
- *                     properties:
- *                       Nome:
- *                         type: string
- *                         description: il nome del parco.
- *                         example: Gardaland
- *                       Coordinate:
- *                         type: string
- *                         description: coordinate del parco.
- *                         example: Lat 45.45722, Long 10.71083
- *                       Prefetiti:
- *                         type: boolean
- *                         description: il parco è stato inserito tra i preferiti dall'utente.
- *                         example: false                    
- */
-
-//ricerca info di un parco dopo click su di esso
-app.get('/api/parco',(request,response)=>{
-    const id = request.query.id;
-
-    database.collection("Parchi").find({Id:parseInt(id)}).toArray((error, result) =>{
-        //mostriamo punti di quel parco
-        response.send(result);
-    })
-})
-
-/**
- * @swagger
  * /api/punti:
  *   get:
  *     summary: Punti di interesse e ristoro di un parco.

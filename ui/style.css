@@ -5,16 +5,29 @@
 }
 .container {
     display: flex;
+    width:100%;
     flex-wrap: wrap;
     margin: 0 auto;
   }
   .dropdown{
     text-align: right;
-    margin-right: 65px;
+    margin : 20px; 
+  }
+
+  #navbar{
+    display: flex;
+    margin: 10px auto;
+    width:100%;
+  }
+
+  #homepage{
+    text-align: left;
+    margin: 20px;
   }
   
   .card {
     margin: 1rem;
+    width:100%;
    /* background: white;*/
     box-shadow: 2px 4px 25px rgba(0, 0, 0, .1);
     border-radius: 12px;
@@ -52,7 +65,7 @@
 }
 
 #map{
-  width: 600px;
+  width: 80%;
   height: 300px;
   align-content: center;  
   align-items: center;
@@ -61,3 +74,8 @@
   margin: 0 auto;
 }
   
+.marker{
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+}

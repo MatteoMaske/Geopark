@@ -1,5 +1,4 @@
 
-
 //INIZIALIZZO PAGINA CON LOGO E DIV PRINCIPALE
 const app = document.getElementById('root');
 
@@ -45,9 +44,7 @@ function initialize(){
         if (request.status >= 200 && request.status < 400) {
             data.forEach(parco => {
 
-              console.log(parco.Nome + " " + parco.Preferiti);
-
-              if(parco.Preferiti){
+          if(parco.Preferiti){
 
             let item=document.createElement('li');
             item.setAttribute('class','list-group-item d-flex justify-content-between align-items-center');
@@ -131,14 +128,17 @@ function changeContainerPointsPage2(ID){
           //centro mappa nel parco
             let long = data[0].CoordinateParco.Long;
             let lat = data[0].CoordinateParco.Lat;
-            createMap(long,lat);
+            const map = createMap(long,lat);
 
           // stampo card punti interesse
             data[0].Punti.forEach(punto => {
-            
+
+            if(punto.Interesse)createMarker(punto.Coordinate.Long,punto.Coordinate.Lat,map,punto.Immagine);
+            else createMarker(punto.Coordinate.Long,punto.Coordinate.Lat,map,punto.Immagine);
+            //console.log(punto.Coordinate.Long + " "+ punto.Coordinate.Lat);
             //card principale
             const card=document.createElement('div');
-            card.setAttribute('class','card');
+            card.setAttribute('class','card'); 
             card.setAttribute('style','width: 15rem;');
             //immagine
             const image=document.createElement('img');
@@ -158,21 +158,16 @@ function changeContainerPointsPage2(ID){
             
             //sottotolo coordinate
             title=document.createElement('h6');
-            title.setAttribute('class','card-title')
-            title.textContent=('Coordinate punto:');
+            title.setAttribute('class','card-title');
+              let font = document.createElement('font');
+            if(!punto.Interesse){
+              font.setAttribute('color','red');
+              font.textContent=('Ristoro');
+              }else font.textContent=('Attrazione');
+              title.appendChild(font);
             cardBody.appendChild(title);
-
-           //latitudine
-            let item=document.createElement('p');
-            item.textContent=('Lat: '+punto.Coordinate.Lat);
-            cardBody.appendChild(item);            
-        
-          //longitudine
-            item=document.createElement('p');
-            item.textContent=('Long: '+punto.Coordinate.Long);
-            cardBody.appendChild(item);
-
             card.appendChild(cardBody);
+
             container.appendChild(card);
             });
         }
@@ -224,6 +219,40 @@ function updateFavourites(id,value){
 }
 
 function generateDropDown(ID){
+
+    //crea div principale
+    const div = document.createElement('div');
+    div.setAttribute('class','navbar');
+
+    //crea tasto indietro
+    var homepage = document.createElement('div');
+    homepage.setAttribute('id','homepage');
+    homepage.setAttribute('class','btn-group');
+    homepage.setAttribute('role','group');
+    homepage.setAttribute('aria-labelled','Basic checkbox toggle button group');
+    homepage.onclick=()=>{
+      initialize();
+    }
+
+    let input = document.createElement('input');
+    input.setAttribute('type','checkbox');
+    input.setAttribute('class','btn-check');
+    input.setAttribute('id','btncheck1');
+    input.setAttribute('autocomplete','off');
+
+    let label = document.createElement('label');
+    label.setAttribute('class','btn btn-outline-primary');
+    label.setAttribute('for','btncheck1');
+        let strong = document.createElement('strong');
+        label.textContent=('< Homepage');
+        label.appendChild(strong);
+    
+    homepage.appendChild(input);
+    homepage.appendChild(label);
+
+    div.appendChild(homepage);
+
+    //crea filtro
     var dropdown=document.createElement('div');
     dropdown.setAttribute('class',"dropdown")
   
@@ -237,13 +266,13 @@ function generateDropDown(ID){
     dropdown.appendChild(button);
 
     let list = document.createElement('ul');
-    list.setAttribute('class','dropdown-menu');
+    list.setAttribute('class','dropdown-menu dropdown-menu-end');
     list.setAttribute('aria-labelledby',"dropdownMenuButton2");
 
       let item = document.createElement('li');
         ancora = document.createElement('a');
         ancora.setAttribute('class',"dropdown-item" );
-        ancora.textContent=("Punti d'interesse");
+        ancora.textContent=("Attrazioni");
         item.appendChild(ancora);
         item.onclick=()=>{
           console.log("filtro per interesse");
@@ -283,8 +312,9 @@ function generateDropDown(ID){
       list.appendChild(item);
 
     dropdown.appendChild(list);
+    div.appendChild(dropdown);
 
-  return(dropdown);
+  return(div);
 
 }
 
@@ -292,6 +322,16 @@ function AttractionFilter(filtro,ID){
 
     // svuoto container
     while(container.firstChild)container.removeChild(container.firstChild);
+    while(app.firstChild)app.removeChild(app.firstChild);
+
+    app.appendChild(logo);
+    app.appendChild(generateDropDown(ID));
+
+    //creo div per mappa
+    const mapDiv=document.createElement('div');
+    mapDiv.setAttribute('id','map');
+    app.appendChild(mapDiv);
+    app.appendChild(container);
 
     var request = new XMLHttpRequest();
     request.open('GET', 'http://localhost:49146/api/punti?id='+ID, true);
@@ -302,8 +342,16 @@ function AttractionFilter(filtro,ID){
         var data = JSON.parse(this.response);
 
         if (request.status >= 200 && request.status < 400) {
+
+          const map = createMap(data[0].CoordinateParco.Long,data[0].CoordinateParco.Lat);
+
             data[0].Punti.forEach(punto => {
+
             if(punto.Interesse==filtro){
+
+              if(punto.Interesse)createMarker(punto.Coordinate.Long,punto.Coordinate.Lat,map,punto.Immagine);
+              else createMarker(punto.Coordinate.Long,punto.Coordinate.Lat,map,punto.Immagine);
+
             //card principale
             const card=document.createElement('div');
             card.setAttribute('class','card');
@@ -324,23 +372,18 @@ function AttractionFilter(filtro,ID){
             title.textContent=(punto.NomePunto);
             cardBody.appendChild(title);
             
-            //sottotolo coordinate
+            //tipo di punto d'interesse
             title=document.createElement('h6');
-            title.setAttribute('class','card-title')
-            title.textContent=('Coordinate punto:');
+            title.setAttribute('class','card-title');
+              let font = document.createElement('font');
+            if(!punto.Interesse){
+              font.setAttribute('color','red');
+              font.textContent=('Ristoro');
+              }else font.textContent=('Attrazione');
+              title.appendChild(font);
             cardBody.appendChild(title);
-
-           //latitudine
-            let item=document.createElement('p');
-            item.textContent=('Lat: '+punto.Coordinate.Lat);
-            cardBody.appendChild(item);            
-        
-          //longitudine
-            item=document.createElement('p');
-            item.textContent=('Long: '+punto.Coordinate.Long);
-            cardBody.appendChild(item);
-
             card.appendChild(cardBody);
+
             container.appendChild(card);
             }
             });
@@ -357,6 +400,20 @@ function createMap(long,lat){
           center: [long, lat], // starting position [lng, lat]
           zoom: 15 // starting zoom
       }); 
+      return map;
+}
+
+function createMarker(lng,lat,map,immagine){
+
+  let div = document.createElement('div');
+  div.className = 'marker';
+  div.style.backgroundImage = 'url('+immagine+')';
+  div.style.backgroundSize = '100%';
+
+  const marker1 = new mapboxgl.Marker(div)
+            .setLngLat([lng, lat])
+            .addTo(map);
+
 }
 
 function disabledEventPropagation(event)
