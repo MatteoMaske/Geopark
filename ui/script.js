@@ -1,4 +1,5 @@
 
+
 //INIZIALIZZO PAGINA CON LOGO E DIV PRINCIPALE
 const app = document.getElementById('root');
 
@@ -47,7 +48,7 @@ function initialize(){
           if(parco.Preferiti){
 
             let item=document.createElement('li');
-            item.setAttribute('class','list-group-item d-flex justify-content-between align-items-center');
+            item.setAttribute('class','list-group-item d-flex justify-content-between align-items-center ');
             item.textContent=(parco.Nome);
             item.onclick=()=>{
                 changeContainerPointsPage2(parco.Id);
@@ -133,8 +134,10 @@ function changeContainerPointsPage2(ID){
           // stampo card punti interesse
             data[0].Punti.forEach(punto => {
 
-            if(punto.Interesse)createMarker(punto.Coordinate.Long,punto.Coordinate.Lat,map,punto.Immagine);
-            else createMarker(punto.Coordinate.Long,punto.Coordinate.Lat,map,punto.Immagine);
+            let affluenza = changeAffluenza();
+
+            if(punto.Interesse)createMarker(punto.Coordinate.Long,punto.Coordinate.Lat,map,punto.Immagine,punto.NomePunto,affluenza);
+            else createMarker(punto.Coordinate.Long,punto.Coordinate.Lat,map,punto.Immagine,punto.NomePunto,affluenza);
             //console.log(punto.Coordinate.Long + " "+ punto.Coordinate.Lat);
             //card principale
             const card=document.createElement('div');
@@ -159,13 +162,20 @@ function changeContainerPointsPage2(ID){
             //sottotolo coordinate
             title=document.createElement('h6');
             title.setAttribute('class','card-title');
+            title.textContent=('Ristoro');
+            
+            //affluenza
+            let p = document.createElement('p');
+            p.textContent=("Affluenza corrente ");
               let font = document.createElement('font');
-            if(!punto.Interesse){
-              font.setAttribute('color','red');
-              font.textContent=('Ristoro');
-              }else font.textContent=('Attrazione');
-              title.appendChild(font);
+              if(affluenza<30)font.setAttribute('color','green');
+              else if(affluenza>=30 && affluenza < 60)font.setAttribute('color','#d9cf0d');
+              else font.setAttribute('color','red');
+              font.textContent=(affluenza+'%');
+            p.appendChild(font);
+
             cardBody.appendChild(title);
+            cardBody.appendChild(p);
             card.appendChild(cardBody);
 
             container.appendChild(card);
@@ -349,8 +359,10 @@ function AttractionFilter(filtro,ID){
 
             if(punto.Interesse==filtro){
 
-              if(punto.Interesse)createMarker(punto.Coordinate.Long,punto.Coordinate.Lat,map,punto.Immagine);
-              else createMarker(punto.Coordinate.Long,punto.Coordinate.Lat,map,punto.Immagine);
+              let affluenza = changeAffluenza();
+
+              if(punto.Interesse)createMarker(punto.Coordinate.Long,punto.Coordinate.Lat,map,punto.Immagine,punto.NomePunto,affluenza,punto.Interesse);
+              else createMarker(punto.Coordinate.Long,punto.Coordinate.Lat,map,punto.Immagine,punto.NomePunto,affluenza,punto.Interesse);
 
             //card principale
             const card=document.createElement('div');
@@ -375,13 +387,22 @@ function AttractionFilter(filtro,ID){
             //tipo di punto d'interesse
             title=document.createElement('h6');
             title.setAttribute('class','card-title');
+            title.textContent=('Ristoro');
+
+            //affluenza
+
+            let p = document.createElement('p');
+            p.textContent=("Affluenza corrente ");
               let font = document.createElement('font');
-            if(!punto.Interesse){
-              font.setAttribute('color','red');
-              font.textContent=('Ristoro');
-              }else font.textContent=('Attrazione');
-              title.appendChild(font);
+              if(affluenza<30)font.setAttribute('color','green');
+              else if(affluenza>=30 && affluenza < 60)font.setAttribute('color','#d9cf0d');
+              else font.setAttribute('color','red');
+              font.textContent=(affluenza+'%');
+            p.appendChild(font);
+
+
             cardBody.appendChild(title);
+            cardBody.appendChild(p);
             card.appendChild(cardBody);
 
             container.appendChild(card);
@@ -403,17 +424,30 @@ function createMap(long,lat){
       return map;
 }
 
-function createMarker(lng,lat,map,immagine){
+function createMarker(lng,lat,map,immagine,testo,affluenza){
 
-  let div = document.createElement('div');
-  div.className = 'marker';
-  div.style.backgroundImage = 'url('+immagine+')';
-  div.style.backgroundSize = '100%';
+  // let div = document.createElement('div');
+  // div.className = 'marker';
+  // div.style.backgroundImage = 'url('+immagine+')';
+  // div.style.backgroundSize = '100%';
+  let color;
+  
+  if(affluenza<30)color="green";
+  else if(affluenza >=30 && affluenza <70)color="yellow";
+  else color="red";
 
-  const marker1 = new mapboxgl.Marker(div)
+  const popup = new mapboxgl.Popup({ offset: 30 }).setHTML(
+    '<h6>'+testo+'</h6><img class="popup" src="'+immagine+'">');
+
+  const marker1 = new mapboxgl.Marker({color: color})
             .setLngLat([lng, lat])
+            .setPopup(popup)
             .addTo(map);
 
+}
+
+function changeAffluenza(){
+  return Math.floor(Math.random()*100);
 }
 
 function disabledEventPropagation(event)
