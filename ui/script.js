@@ -159,10 +159,12 @@ function changeContainerPointsPage2(ID){
             title.textContent=(punto.NomePunto);
             cardBody.appendChild(title);
             
-            //sottotolo coordinate
+            //sottotitolo coordinate
             title=document.createElement('h6');
             title.setAttribute('class','card-title');
-            title.textContent=('Ristoro');
+            if(!punto.Interesse){
+              title.textContent=('Ristoro');
+            } else title.textContent=('Attrazione');
             
             //affluenza
             let p = document.createElement('p');
