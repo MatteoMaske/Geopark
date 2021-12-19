@@ -58,16 +58,16 @@ app.listen(49146, () => {
     console.log("APIs Running");
 
       //Mongo DB Connection
-  MongoClient.connect(CONNECTION_STRING, {useNewUrlParser: true, 
-    useUnifiedTopology: true}, (error, client) =>{
-      if(error){
-        console.log("Error connecting at the MongoDB: "+error);
-      }
-      else{
-        database=client.db(DATABASE);
-        console.log("Mongo DB Connection Successfull");
-      }
-    })
+//   MongoClient.connect(CONNECTION_STRING, {useNewUrlParser: true, 
+//     useUnifiedTopology: true}, (error, client) =>{
+//       if(error){
+//         console.log("Error connecting at the MongoDB: "+error);
+//       }
+//       else{
+//         database=client.db(DATABASE);
+//         console.log("Mongo DB Connection Successfull");
+//       }
+//     })
 
 });
 
@@ -110,11 +110,15 @@ app.listen(49146, () => {
 
 //recerca di punti interesse di un parco
 app.get('/api/punti',(req,res)=>{
-    //console.log("sono qui");
-    const id=req.query.id;
-    database.collection("Parchi").find({Id:parseInt(id)}).toArray((error, result) =>{
-        res.send(result);
-        })
+    
+    const id=req.query.id;    
+
+        database.collection("Parchi").find({Id:parseInt(id)}).toArray((err, result) =>{
+            if (err) {
+                console.log("ERRORE: " + error);
+            }
+            res.send(result);
+            });
 })
 
 //richiesta punti in base a filtro
@@ -158,9 +162,18 @@ app.get('/api/punti',(req,res)=>{
 
 //richesta dei parchi nel database per pagina principale
 app.get('/api/parchi', (request, response) => {
-   database.collection("Parchi").find({}).toArray((error, result) =>{
-    response.send(result);
-    })
+
+    MongoClient.connect(CONNECTION_STRING, { useNewUrlParser: true ,useUnifiedTopology: true}, (error, client) => {
+        database = client.db(DATABASE);
+        console.log("Mongo DB Connection Successfull");
+        if(error)console.error(error);
+        database.collection("Parchi").find({}).toArray((err, result) =>{  
+            if (err) {
+                console.log(error);
+            }
+            response.send(result);
+            })
+    });
 })
 
 /**
@@ -197,10 +210,11 @@ app.post('/api/parco', (request,response) =>{
 
     database.collection("Parchi").insertOne({
         "Id": newId+1,
-        "Nome": request.body['Nome']
+        "Nome": request.body['Nome'],
+        "Preferiti": false
     });
 
-    response.json("Parco aggiunto, " + (newId+1));
+    response.json("Parco aggiunto correttamente");
     })
 })
 
@@ -243,9 +257,10 @@ app.put('/api/parco/preferiti', (request,response) =>{
             $set:{
                 "Preferiti": request.body['preferito']
             }
-        }
+        }        
     );
     response.json("Update succesfully");
+    
 });
 
 /**
@@ -269,11 +284,14 @@ app.put('/api/parco/preferiti', (request,response) =>{
 
 //eliminazione parco da id
 app.delete('/api/parco/:id',(request,response)=>{
+
     database.collection("Parchi").deleteOne({
         Id: parseInt(request.params.id)
     });
 
-    response.json("Deleted successfully park " + request.params.id);
+    response.json("Deleted successfully park");
     
 })
+
+module.exports=app;
 

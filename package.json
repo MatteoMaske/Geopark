@@ -1,0 +1,28 @@
+{
+  "name": "geopark",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test | tap-spec",
+    "start": "nodemon ./api/index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.24.0",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "mongodb": "^4.2.1",
+    "nodemon": "^2.0.15",
+    "swagger-jsdoc": "^6.1.0",
+    "swagger-ui-express": "^4.2.0",
+    "tape": "^5.3.2"
+  },
+  "devDependencies": {
+    "nodemod": "^3.0.0",
+    "supertest": "^6.1.6",
+    "tap-spec": "^5.0.0"
+  }
+}

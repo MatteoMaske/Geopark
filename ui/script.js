@@ -201,7 +201,6 @@ function changeStar(star,id){
 
 function updateFavourites(id,value){
 
-    console.log("trying to update park " + id + " with " + value);
 
     let idInt = parseInt(id);
 
