@@ -116,6 +116,7 @@ function changeContainerPointsPage2(ID){
     app.appendChild(mapDiv);
     app.appendChild(container);
 
+
     var request = new XMLHttpRequest();
     request.open('GET', 'http://localhost:49146/api/punti?id='+ID, true);
     request.onload = function () {
@@ -127,9 +128,14 @@ function changeContainerPointsPage2(ID){
         if (request.status >= 200 && request.status < 400) {
 
           //centro mappa nel parco
+
             let long = data[0].CoordinateParco.Long;
             let lat = data[0].CoordinateParco.Lat;
             const map = createMap(long,lat);
+
+          //aggiungo nome del parco
+            let nomeParco=data[0].Nome;
+            addTitle(nomeParco);
 
           // stampo card punti interesse
             data[0].Punti.forEach(punto => {
@@ -230,10 +236,10 @@ function updateFavourites(id,value){
 }
 
 function generateDropDown(ID){
-
     //crea div principale
     const div = document.createElement('div');
     div.setAttribute('class','navbar');
+    div.setAttribute('id','navbar');
 
     //crea tasto indietro
     var homepage = document.createElement('div');
@@ -265,7 +271,8 @@ function generateDropDown(ID){
 
     //crea filtro
     var dropdown=document.createElement('div');
-    dropdown.setAttribute('class',"dropdown")
+    dropdown.setAttribute('class',"dropdown");
+    dropdown.id=('dropdown');
   
     let button = document.createElement('button');
     button.setAttribute('class','btn btn-secondary dropdown-toggle');
@@ -286,7 +293,6 @@ function generateDropDown(ID){
         ancora.textContent=("Attrazioni");
         item.appendChild(ancora);
         item.onclick=()=>{
-          console.log("filtro per interesse");
           AttractionFilter(true,ID);
         }
       list.appendChild(item);
@@ -299,7 +305,6 @@ function generateDropDown(ID){
         ancora.textContent=("Punti ristoro");
       item.appendChild(ancora);
       item.onclick=()=>{
-        console.log("filtro per ristori");
         AttractionFilter(false,ID);
       }
       list.appendChild(item);
@@ -317,7 +322,6 @@ function generateDropDown(ID){
         ancora.textContent=("Tutti");
         item.appendChild(ancora);
         item.onclick=()=>{
-          console.log("filtro per ristori");
           changeContainerPointsPage2(ID);
         }
       list.appendChild(item);
@@ -326,6 +330,20 @@ function generateDropDown(ID){
     div.appendChild(dropdown);
 
   return(div);
+
+}
+
+function addTitle(nomeParco){
+    const navbar = document.getElementById('navbar');
+
+    const div = document.createElement('div');
+    div.id=('header');
+      const header = document.createElement('strong');
+      header.className=('titolo');
+      header.textContent=(nomeParco);
+      div.appendChild(header);
+
+    navbar.appendChild(div);
 
 }
 
@@ -355,7 +373,9 @@ function AttractionFilter(filtro,ID){
         if (request.status >= 200 && request.status < 400) {
 
           const map = createMap(data[0].CoordinateParco.Long,data[0].CoordinateParco.Lat);
-
+          //aggiungo nome del parco
+          let nomeParco=data[0].Nome;
+          addTitle(nomeParco);
             data[0].Punti.forEach(punto => {
 
             if(punto.Interesse==filtro){
