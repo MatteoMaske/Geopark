@@ -56,20 +56,49 @@ var database;
 
 app.listen(49146, () => {
     console.log("APIs Running");
-
-      //Mongo DB Connection
-//   MongoClient.connect(CONNECTION_STRING, {useNewUrlParser: true, 
-//     useUnifiedTopology: true}, (error, client) =>{
-//       if(error){
-//         console.log("Error connecting at the MongoDB: "+error);
-//       }
-//       else{
-//         database=client.db(DATABASE);
-//         console.log("Mongo DB Connection Successfull");
-//       }
-//     })
-
 });
+
+/**
+ * @swagger
+ * /api/parchi:
+ *   get:
+ *     summary: Elenco dei parchi.
+ *     description: Ritorna un elenco dei parco presenti nel sistema.
+ *     responses:
+ *       200:
+ *         description: Elenco dei parco.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       Nome:
+ *                         type: string
+ *                         description: il nome del parco.
+ *                         example: Gardaland                   
+ */
+
+//richesta dei parchi nel database per pagina principale
+app.get('/api/parchi', (request, response) => {
+    //Avvio qui connessione con il db per consentire testing corretto
+    MongoClient.connect(CONNECTION_STRING, { useNewUrlParser: true ,useUnifiedTopology: true}, (error, client) => {
+        database = client.db(DATABASE);
+        console.log("Mongo DB Connection Successfull");
+        if(error)console.error(error);
+        database.collection("Parchi").find({}).toArray((err, result) =>{  
+            if (err) {
+                console.log(error);
+            }
+            response.send(result);
+            })
+    });
+
+})
 
 /**
  * @swagger
@@ -111,69 +140,13 @@ app.listen(49146, () => {
 //recerca di punti interesse di un parco
 app.get('/api/punti',(req,res)=>{
     
-    const id=req.query.id;    
+    const id=req.query.id;
+    database.collection("Parchi").find({Id:parseInt(id)}).toArray((err, result) =>{
+        
+        if (err) console.log("ERRORE: " + error);
 
-        database.collection("Parchi").find({Id:parseInt(id)}).toArray((err, result) =>{
-            if (err) {
-                console.log("ERRORE: " + error);
-            }
-            res.send(result);
-            });
-})
-
-//richiesta punti in base a filtro
-// app.get('/api/punti/filtro',(req,res)=>{
-//     const filter=req.query.filtro;
-//     let filtro;
-//     if (filter=="true")filtro = true;
-//     else filtro=false;
-//     console.log(typeof(filtro));
-
-//     database.collection("Parchi").find({Punti:{Interesse:filtro}}).toArray((error, result) =>{
-//         console.log(result);
-//         res.send(result);
-//         })
-// })
-
-/**
- * @swagger
- * /api/parchi:
- *   get:
- *     summary: Elenco dei parchi.
- *     description: Ritorna un elenco dei parco presenti nel sistema.
- *     responses:
- *       200:
- *         description: Elenco dei parco.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 data:
- *                   type: array
- *                   items:
- *                     type: object
- *                     properties:
- *                       Nome:
- *                         type: string
- *                         description: il nome del parco.
- *                         example: Gardaland                   
- */
-
-//richesta dei parchi nel database per pagina principale
-app.get('/api/parchi', (request, response) => {
-
-    MongoClient.connect(CONNECTION_STRING, { useNewUrlParser: true ,useUnifiedTopology: true}, (error, client) => {
-        database = client.db(DATABASE);
-        console.log("Mongo DB Connection Successfull");
-        if(error)console.error(error);
-        database.collection("Parchi").find({}).toArray((err, result) =>{  
-            if (err) {
-                console.log(error);
-            }
-            response.send(result);
-            })
-    });
+        res.send(result);
+        });
 })
 
 /**
