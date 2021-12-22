@@ -55,16 +55,6 @@ var database;
 
 app.listen(49146, () => {
     console.log("APIs Running");
-    MongoClient.connect(CONNECTION_STRING, {useNewUrlParser: true, 
-        useUnifiedTopology: true}, (error, client) =>{
-          if(error){
-            console.log("Error connecting at the MongoDB: "+error);
-          }
-          else{
-            database=client.db(DATABASE);
-            console.log("Mongo DB Connection Successfull");
-          }
-        })
 });
 
 /**
