@@ -11,7 +11,6 @@ test('TEST1: GET dei parchi', function (assert) {
         .expect(200)
         .end(function (err, res) {
             var num_parchi = res.body.length;
-            console.log(res.body.length);
             var result = false;
 
             if(num_parchi == 0) {
@@ -53,7 +52,6 @@ test('TEST3: Put aggiornamento', function (assert) {
             if (err) {
                 reject(new Error('An error occured with the employee Adding API, err: ' + err))
             }
-            console.log(res.body);
 
             assert.error(err, 'No error');
             assert.isEqual("Update succesfully", res.body, "Aggiornamento effettutato correttamente")
