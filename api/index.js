@@ -53,9 +53,18 @@ var CONNECTION_STRING="mongodb+srv://marina:marina@cluster0.xlbi6.mongodb.net/te
 var DATABASE="testDB";
 var database;
 
-
 app.listen(49146, () => {
     console.log("APIs Running");
+    MongoClient.connect(CONNECTION_STRING, {useNewUrlParser: true, 
+        useUnifiedTopology: true}, (error, client) =>{
+          if(error){
+            console.log("Error connecting at the MongoDB: "+error);
+          }
+          else{
+            database=client.db(DATABASE);
+            console.log("Mongo DB Connection Successfull");
+          }
+        })
 });
 
 /**
@@ -267,4 +276,3 @@ app.delete('/api/parco/:id',(request,response)=>{
 })
 
 module.exports=app;
-
